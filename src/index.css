@@ -2,12 +2,21 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  color: white;
+  background: url("./images/echospot.jpg") no-repeat center center fixed;
+  background-size: contain;
 }
 
 video, canvas {
-  margin: 0 auto;
-  position: absolute;
-  left: 0;
+  margin: auto auto;
+  position: fixed;
+  left: 25%;
+  right: 25%;
+  top: 25%;
+  bottom: 25%;
+  border-radius: 50%;
+  object-fit: cover;
+  z-index: -1;
 }
 img{
   position: absolute;

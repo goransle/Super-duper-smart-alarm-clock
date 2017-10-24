@@ -1,9 +1,8 @@
-import React, {
-  Component
-} from 'react';
+import React, {Component} from 'react';
 import logo from './logo.svg';
 import './App.css';
-import WebcamCapture from './components/WebcamCapture'
+import WebcamCapture from './components/WebcamCapture';
+import Speak from './components/Speak';
 
 class App extends Component {
   constructor(props) {
@@ -18,9 +17,7 @@ class App extends Component {
     sessionStorage.setItem("startTid", this.state.startTime.getTime());
     var end;
     return ( <div className = "App" >
-      <Time start = {
-        this.state.startTime
-      }/>
+      <Speak text="Hello" />
       <Alarm />
       </div>
     );
@@ -33,9 +30,18 @@ class Alarm extends Component {
     this.state = {
       alarmTime: null,
       currentTime: null,
-      fireLazers: false
+      fireLazers: false,
+      woke: false,
+      wokeTime: null
     };
+    //Bindings
     this.setTime = this.setTime.bind(this);
+    this.alarmHandler = this.alarmHandler.bind(this);
+  }
+  alarmHandler(){
+      this.setState({woke: true,
+        wokeTime: this.state.currentTime
+      });
   }
   setTime(e) {
     e.preventDefault();
@@ -53,8 +59,7 @@ class Alarm extends Component {
     if(hours < 10){
       hours = "0" + hours;
     }
-    var timeString = time.getHours() + ":" + minutes;
-    console.log(timeString)
+    var timeString = hours + ":" + minutes;
     this.setState({
       currentTime: timeString
     })
@@ -71,12 +76,13 @@ class Alarm extends Component {
   render() {
     return (
       <div>
-      <p> The time is: {
+      <h1>{
         this.state.currentTime
-      } </p>
+      } </h1>
       <form >
       <label htmlFor = "appt-time" > Set wakeup time:
       </label>
+      <br/>
       <input id = "appt-time"
       type = "time"
       name = "appt-time"
@@ -85,16 +91,17 @@ class Alarm extends Component {
       }
       />
       </form>
-      <p> Alarm set to: {
+      <p>{
         "\u0020"
       } {
-        this.state.alarmTime && this.state.alarmTime
+        this.state.alarmTime && "Alarm set to: " + this.state.alarmTime
       }
       </p> {
         this.state.fireLazers &&
           <div>
-          <
-          WebcamCapture / > { /*<iframe width="420" height="345" src="http://www.youtube.com/embed/SGyOaCXr8Lw?start=5&autoplay=1" frameborder="0" allowfullscreen></iframe>*/ }
+          <WebcamCapture action={this.alarmHandler} status={this.state.woke}/>
+          <Speak text="wake up!" />
+          {this.state.woke && <p>Congratulations! You got up at {this.state.wokeTime} That is {this.state.wokeTime.split(":")[1] - this.state.alarmTime.split(":")[1]} minutes!</p>}
           </div>
       }
       </div>
@@ -109,7 +116,7 @@ function AwakeButton() {
     var sluttTid = new Date();
     sessionStorage.setItem("sluttTid", sluttTid.getTime());
     //localStorage.setItem(sessionStorage.getItem("startTid"),[sluttTid.getTime()])
-    console.log(sluttTid.getTime() - sessionStorage.getItem("startTid"));
+    //console.log(sluttTid.getTime() - sessionStorage.getItem("startTid"));
   }
   return ( <button onClick = {handleClick}> {
       "I'm awake"

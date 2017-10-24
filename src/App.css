@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  margin-top: 20%;
+  transform: rotate(-0.001turn);
 }
 
 .App-logo {

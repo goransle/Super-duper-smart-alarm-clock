@@ -8,8 +8,8 @@ class WebcamCapture extends Component {
     super(props);
     this.state = {
       imageSrc: null,
-      tab: 0
     };
+    //this.setState = this.setState.bind(this);
   }
   setRef = (webcam) => {
     this.webcam = webcam;
@@ -22,7 +22,7 @@ class WebcamCapture extends Component {
     this.setState({ imageSrc });
     //this.senditToTheCloud();
   };
-  tracking(){
+  tracking = () =>{
     const tracking = window.tracking;
     var video = this.video
     var canvas = this.refs.canvas
@@ -34,7 +34,7 @@ class WebcamCapture extends Component {
     tracker.setEdgesDensity(0.1);
 
     tracking.track(video, tracker, { camera: true });
-    tracker.on('track', function(event) {
+    tracker.on('track', event => {
       context.clearRect(0, 0, canvas.width, canvas.height);
       event.data.forEach(function(rect) {
         context.strokeStyle = '#a64ceb';
@@ -43,8 +43,10 @@ class WebcamCapture extends Component {
         context.fillStyle = "#fff";
         context.fillText('x: ' + rect.x + 'px', rect.x + rect.width + 5, rect.y + 11);
         context.fillText('y: ' + rect.y + 'px', rect.x + rect.width + 5, rect.y + 22);
-        //console.log("I see ur face")
       });
+      if(event.data.length > 0 && !this.props.status){
+        this.props.action()
+      }
     });
   }
   keepCapturing(ms) {
@@ -67,18 +69,19 @@ class WebcamCapture extends Component {
   }
   componentWillUnmount(){
     clearTimeout(this.timer);
+    this.tracker.removeAllListeners()
   }
   render() {
     return (
       <div>
       <Webcam
         audio={false}
-        height={500}
+        height={300}
         ref={this.setRef}
         screenshotFormat="image/jpeg"
-        width={500}
+        width={300}
       />
-      <canvas ref="canvas" width="500" height="500"></canvas>
+      <canvas ref="canvas" width="300" height="300"></canvas>
       {/*<button onClick={this.capture}>Capture photo</button>*/}
       {this.state.imageSrc && <img src={this.state.imageSrc} ref="image" />}
       </div>
