@@ -5,6 +5,7 @@ import WebcamCapture from './components/WebcamCapture';
 import Speak from './components/Speak';
 import Sounds from './components/Sounds';
 import Sound from 'react-sound';
+import {SLR} from 'ml-regression'
 
 class App extends Component {
   constructor(props) {
@@ -13,16 +14,17 @@ class App extends Component {
       startTime: new Date()
     };
   }
-  componentDidMount() {}
+  componentDidMount() {
+  }
 
   render() {
     var end;
     {sessionStorage.setItem("startTid", this.state.startTime.getTime());}
     return ( <div className = "App" >
-      <Alarm />
-      </div>
-    );
-  }
+    <Alarm />
+    </div>
+  );
+}
 }
 
 class Alarm extends Component {
@@ -41,9 +43,30 @@ class Alarm extends Component {
     this.alarmHandler = this.alarmHandler.bind(this);
   }
   alarmHandler(){
-      this.setState({woke: true,
-        wokeTime: this.state.currentTime
-      });
+    this.setState({woke: true,
+      wokeTime: this.state.currentTime
+    });
+  }
+  korrigertTid = () =>{
+    if(this.state.alarmTime){
+      var timer = this.state.alarmTime.split(":")[0];
+      var minutter = this.state.alarmTime.split(":")[1];
+      var korreksjon = Math.ceil(this.state.korreksjon/60)
+
+      if(korreksjon < 0){
+        korreksjon = 0;
+      }
+
+      var korrigerteMinutter = minutter - korreksjon;
+
+      if(korrigerteMinutter < 10){
+        korrigerteMinutter = "0" + korrigerteMinutter;
+      }
+      return(timer + ":" + korrigerteMinutter);
+    }
+    else{
+      return this.state.alarmTime
+    }
   }
   setTime(e) {
     e.preventDefault();
@@ -52,11 +75,13 @@ class Alarm extends Component {
     today.setMinutes(0);
     today.setMilliseconds(0);
     today.setSeconds(0);
+
+    var korreksjon = Math.floor(this.regress(this.getLocalStorage(), e.target.valueAsNumber/1000/60));
     this.setState({
       alarmDateTime: today.getTime() + e.target.valueAsNumber,
-      alarmTime: e.target.value
+      alarmTime: e.target.value,
+      korreksjon: korreksjon
     })
-    console.log(this.state.alarmTime)
   }
   tick() {
     var time = new Date();
@@ -72,7 +97,7 @@ class Alarm extends Component {
     this.setState({
       currentTime: timeString
     })
-    if (this.state.currentTime === this.state.alarmTime) {
+    if (this.state.currentTime === this.korrigertTid()) {
       this.setState({
         fireLazers: true
       })
@@ -80,7 +105,6 @@ class Alarm extends Component {
   }
   componentDidMount() {
     setInterval(this.tick.bind(this), 1000);
-    this.getLocalStorage();
   }
 
   render() {
@@ -90,42 +114,45 @@ class Alarm extends Component {
         this.state.currentTime
       } </h1>
       {!this.state.fireLazers &&
-      <form >
-      <label htmlFor = "appt-time" > Set wakeup time:
-      </label>
-      <br/>
-      <input id = "appt-time"
-      type = "time"
-      name = "appt-time"
-      defaultValue onChange = {
-        this.setTime
+        <div>
+        <form >
+        <label htmlFor = "appt-time" > Set wakeup time:
+        </label>
+        <br/>
+        <input id = "appt-time"
+        type = "time"
+        name = "appt-time"
+        defaultValue onChange = {
+          this.setTime
+        }
+        />
+        </form>
+          <p>Korreksjon: {this.state.korreksjon}</p>
+        </div>
       }
-      />
-      </form>
-    }
       <p>{
         "\u0020"
       }
       </p> {
         this.state.fireLazers &&
-          <div>
-          <Sounds stop={this.state.woke}/>
-          <WebcamCapture action={this.alarmHandler} status={this.state.woke}/>
+        <div>
+        <Sounds stop={this.state.woke}/>
+        <WebcamCapture action={this.alarmHandler} status={this.state.woke}/>
         {this.state.woke &&
-            <p>Congratulations! You got up at {this.state.wokeTime} That is {this.state.wokeTime.split(":")[1] - this.state.alarmTime.split(":")[1]} minutes! {this.logStuff()}</p>
-          }
-          </div>
+          <p>Congratulations! You got up at {this.state.wokeTime}{this.logStuff()}</p>
+        }
+        </div>
       }
       </div>
     )
   }
   logStuff() {
-      var sluttTid = new Date();
-      if(sessionStorage.getItem("sluttTid") < sessionStorage.getItem("startTid")){
-        sessionStorage.setItem("sluttTid", sluttTid.getTime());
-        localStorage.setItem(this.state.alarmDateTime,[sluttTid.getTime()]);
-      }
-      //console.log(sluttTid.getTime() - sessionStorage.getItem("startTid"));
+    var sluttTid = new Date();
+    if(sessionStorage.getItem("sluttTid") < sessionStorage.getItem("startTid")){
+      sessionStorage.setItem("sluttTid", sluttTid.getTime());
+      localStorage.setItem(this.state.alarmDateTime,[sluttTid.getTime()]);
+    }
+    //console.log(sluttTid.getTime() - sessionStorage.getItem("startTid"));
   }
   // Returnerer data lagra i localstorage som array
   getLocalStorage(){
@@ -135,6 +162,19 @@ class Alarm extends Component {
       array.push([localStorage.key(x), localStorage.getItem(localStorage.key(x))]);
     }
     return(array);
+  }
+  regress(data, time){
+    var differences = [];
+    var startTimes = [];
+    for (var i = 0; i < data.length; i++) {
+      differences.push((((data[i][1] - data[i][0]) * 0.001)));
+      var startDate = new Date(data[i][0] *1);
+      startTimes.push(parseFloat(startDate.getHours() * 60 + startDate.getMinutes()));
+    };
+    console.log(startTimes);
+    console.log(differences);
+    let regression = new SLR(startTimes, differences);
+    return(regression.predict(time));
   }
 }
 
