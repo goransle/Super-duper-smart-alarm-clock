@@ -14,7 +14,7 @@ class Sounds extends Component{
   }
   getWeatherData = () =>{
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://api.openweathermap.org/data/2.5/forecast?id=3161732&units=metric&APPID=aad30aa1f0c3d793baca4e3e04a1cc35", false);
+    xhr.open("GET", "https://api.openweathermap.org/data/2.5/forecast?id=3161732&units=metric&APPID=aad30aa1f0c3d793baca4e3e04a1cc35", false);
     xhr.send();
     console.log(xhr.status);
     return(xhr.response);
