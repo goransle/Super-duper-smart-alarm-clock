@@ -5,7 +5,7 @@ import WebcamCapture from './components/WebcamCapture';
 import Speak from './components/Speak';
 import Sounds from './components/Sounds';
 import Sound from 'react-sound';
-import {SLR} from 'ml-regression'
+import SimpleLinearRegression from 'ml-regression-simple-linear';
 
 class App extends Component {
   constructor(props) {
@@ -77,6 +77,9 @@ class Alarm extends Component {
     today.setSeconds(0);
 
     var korreksjon = Math.floor(this.regress(this.getLocalStorage(), e.target.valueAsNumber/1000/60));
+    if(isNaN(korreksjon)){
+      korreksjon = 0;
+    }
     this.setState({
       alarmDateTime: today.getTime() + e.target.valueAsNumber,
       alarmTime: e.target.value,
@@ -173,7 +176,7 @@ class Alarm extends Component {
     };
     console.log(startTimes);
     console.log(differences);
-    let regression = new SLR(startTimes, differences);
+    let regression = new SimpleLinearRegression(startTimes, differences);
     return(regression.predict(time));
   }
 }

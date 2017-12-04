@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "homepage": "http://folk.uib.no/gsl089/alarmbot/",
   "engines": {
-    "node": "6.11.2"
+    "node": ">=6.11.2"
   },
   "private": true,
   "dependencies": {
-    "ml-regression": "^4.4.2",
+    "ml-regression-simple-linear": "^1.0.2",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-scripts": "1.0.13",
