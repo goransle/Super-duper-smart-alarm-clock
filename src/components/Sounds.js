@@ -97,7 +97,7 @@ var startText = {
 var endText = {
   "snill" : ["rise", "get up"],
   "slem" : ["get the heck up!", "GET UP!!", "get out of bed!"],
-  "demanding" : ["get the heck up!", "don't be a lazy bum", "G"]
+  "demanding" : ["get the heck up!", "don't be a lazy bum", "get up NOW"]
 }
 function getOneOf(obj, key) {
 	var array = obj[key];
