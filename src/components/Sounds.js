@@ -35,7 +35,7 @@ class Sounds extends Component{
         <Sound id="background-sound" url={this.state.song} playStatus={Sound.status.PLAYING} volume={this.state.volume} onFinishedPlaying={this.handleSongFinishedPlaying}/>
         {(this.state.timer === 15) &&
           /*<Speak text={say("snill")}/>*/
-          <Speak text={"Outside there is " + this.state.weather.temp + " degrees and " + this.state.weather.description}/>
+          <Speak text={"Outside it is " + this.state.weather.temp + " degrees and " + this.state.weather.description}/>
         }
         {(this.state.timer === 30) &&
           <Speak text={say("slem")}/>
@@ -80,7 +80,7 @@ class Sounds extends Component{
 }
 
 var sounds = {
-  "ukulele": ["./sounds/uke/Monplaisir - Relaxing Ukulele - 01 Red Hair, Blue Sky.mp3","./sounds/uke/Monplaisir - Relaxing Ukulele - 02 Sincere Love.mp3"],
+  "ukulele": ["./sounds/uke/Monplaisir - Relaxing Ukulele - 01 Red Hair, Blue Sky.mp3","./sounds/uke/Monplaisir - Relaxing Ukulele - 02 Sincere Love.mp3", "./sounds/uke/Monplaisir - Relaxing Ukulele - 03 Time Gap.mp3"],
   "weird" : ["./sounds/weird/ZoneTripper.mp3","./sounds/weird/People_Skills.mp3"],
   picksong(genre){
     return getOneOf(this, genre);
@@ -90,14 +90,14 @@ var sounds = {
 //funksjoner for snakking
 
 var startText = {
-  "snill" : ["Would you kindly", "Please", "Could you"],
-  "slem" : ["", "It's about time to", "Stop being lazy and"],
+  "snill" : ["Would you kindly", "Please", "Could you", "Could you please"],
+  "slem" : ["", "It's about time to", "Quit being lazy and"],
   "demanding" : ["If you don't get up I will play that song that you hate. So", "I'm going to play your least favourite song if you don't "]
 }
 var endText = {
   "snill" : ["rise", "get up"],
   "slem" : ["get the heck up!", "GET UP!!", "get out of bed!"],
-  "demanding" : ["get the heck up!", "G E T U P !!", "GEEEEET UUUUUUUP!!!"]
+  "demanding" : ["get the heck up!", "don't be a lazy bum", "G"]
 }
 function getOneOf(obj, key) {
 	var array = obj[key];
