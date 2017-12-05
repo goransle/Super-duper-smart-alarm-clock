@@ -3,7 +3,7 @@
 }
 body{
   margin: auto;
-  padding: 0;
+  padding: 1em;
   font-family: sans-serif;
   color: black;
   /*background: url("./images/echospot.jpg") no-repeat center center fixed;*/
@@ -16,6 +16,10 @@ body{
 #root p{
   margin: 1em;
   z-index: 1;
+}
+#root div{
+  background-color: white;
+  text-align: center;
 }
 video, canvas{
   margin: 0;
