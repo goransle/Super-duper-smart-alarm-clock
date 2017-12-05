@@ -130,7 +130,9 @@ class Alarm extends Component {
         }
         />
         </form>
-          <p>Korreksjon: {this.state.korreksjon}</p>
+          {this.state.alarmTime &&
+          <p>Correction: {this.state.korreksjon} seconds</p>
+        }
         </div>
       }
       <p>{
